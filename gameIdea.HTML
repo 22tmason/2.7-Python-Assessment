@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>64x64 Tile Grid</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+            overflow: hidden;
+        }
+        .grid-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            width: 100vw;
+            flex-grow: 1;
+        }
+        .grid-wrapper {
+            transform-origin: center;
+            transition: transform 0.1s;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(64, 10px);
+            grid-template-rows: repeat(64, 10px);
+            gap: 1px;
+            border: 2px solid black;
+        }
+        .tile {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+        .hud {
+            width: 100%;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            padding: 10px;
+        }
+        .menu {
+            display: flex;
+            gap: 10px;
+        }
+        .menu button {
+            background-color: gray;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .menu button:hover {
+            background-color: darkgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="grid-wrapper" id="gridWrapper">
+            <div class="grid" id="grid"></div>
+        </div>
+    </div>
+    <div class="hud">
+        <p>HUD: Zoom with scroll, pan with mouse drag</p>
+        <div class="menu">
+            <button>Military</button>
+            <button>Civilian</button>
+            <button>Research</button>
+        </div>
+    </div>
+    <script>
+        const grid = document.getElementById("grid");
+        const gridWrapper = document.getElementById("gridWrapper");
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isPanning = false;
+        let startX, startY;
+
+        for (let i = 0; i < 64 * 64; i++) {
+            const tile = document.createElement("button");
+            tile.classList.add("tile");
+            grid.appendChild(tile);
+        }
+
+        document.addEventListener("wheel", (event) => {
+            event.preventDefault();
+            const scaleFactor = 1.1;
+            scale *= event.deltaY > 0 ? 1 / scaleFactor : scaleFactor;
+            gridWrapper.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+        });
+
+        document.addEventListener("mousedown", (event) => {
+            isPanning = true;
+            startX = event.clientX - translateX;
+            startY = event.clientY - translateY;
+        });
+
+        document.addEventListener("mousemove", (event) => {
+            if (!isPanning) return;
+            translateX = event.clientX - startX;
+            translateY = event.clientY - startY;
+            gridWrapper.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+        });
+
+        document.addEventListener("mouseup", () => {
+            isPanning = false;
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
