@@ -90,6 +90,20 @@ def menu():
     print("4. Electrical")
     print("5. Cart\n")
     print("Please select a department")
+    number = input_int("> ")
+    if number == 1:
+        department_menu(hardware, "Hardware Department")
+    elif number == 2:
+        department_menu(homeware, "Homeware Department")
+    elif number == 3:
+        department_menu(paint, "Paint Department")
+    elif number == 4:
+        department_menu(electrical, "Electrical Department")
+    elif number == 5:
+        cart_menu()
+    else:
+        print("Invalid input. Please enter a number between 1 and 5")
+        input("Press enter to continue.")
 
 
 def department_menu(department, name):
@@ -145,16 +159,3 @@ def cart_menu():
 
 while True:
     menu()
-    number = input_int("> ")
-    if number == 1:
-        department_menu(hardware, "Hardware Department")
-    elif number == 2:
-        department_menu(homeware, "Homeware Department")
-    elif number == 3:
-        department_menu(paint, "Paint Department")
-    elif number == 4:
-        department_menu(electrical, "Electrical Department")
-    elif number == 5:
-        cart_menu()
-    else:
-        break
