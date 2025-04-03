@@ -78,6 +78,20 @@ def input_int(prompt):
             print("Invalid input. Please enter a number.")
 
 
+def order_details():
+    """Display the order details."""
+    # This function is not used in the program, but it can be used to display the order details.
+    print("Order Details:")
+    for i in cart:
+        print(i[0] + " - $" + str(i[1]))
+    total = 0
+    for i in cart:
+        total += i[1]
+    return total
+    print("Your total is $" + str(total))
+    input("Press enter to exit.")
+
+
 def menu():
     """Display the main menu and allow the user to select a department or their cart."""
     # This function clears the console and displays the main menu.
@@ -134,22 +148,14 @@ def cart_menu():
     if len(cart) == 0:
         print("Your cart is empty.")
     else:
-        total = 0
-        print("Cart:")
-        for i in cart:
-            print(i[0] + " - $" + str(i[1]))
-            total += i[1]
-        print("Total: $" + str(total))
+        order_details()
     print("1. Check out")
     print("2. Continue Shopping")
     print("Would you like to check out or continue shopping?")
     number = input_int("> ")
     if number == 1:
-        print("Thank you for shopping at the Super Hardware Store!")
-        print("Order Details:")
-        for i in cart:
-            print(i[0] + " - $" + str(i[1]))
-        print("Your total is $" + str(total))
+        print("Thank you for shopping at Super Hardware Store!")
+        order_details()
         input("Press enter to exit.")
     elif number == 2:
         return
