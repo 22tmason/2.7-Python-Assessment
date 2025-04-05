@@ -142,7 +142,6 @@ def cart_menu():
     """Display the cart and allow the user to check out or continue shopping."""
     delivery_cost = 0.00
     delivery_method = "N/A"
-    delivery_address = ["N/A"]
 
     cls()
     if len(cart) == 0:
@@ -155,27 +154,48 @@ def cart_menu():
         print("Would you like to check out or continue shopping?")
         number = input_int("> ")
         if number == 1:
-            cls()
-            print("Select a delivery option:")
-            print("1. Standard Delivery")
-            print("2. Express Delivery")
-            print("3. Pickup")
-            number = input_int("> ")
-            if number == 1:
-                delivery_cost = 5 + len(cart) * 2
-                delivery_method = "Standard Delivery"
-                print("Enter your delivery address:")
-            elif number == 2:
-                delivery_cost = 10 + len(cart) * 3
-                delivery_method = "Express Delivery"
-            elif number == 3:
-                delivery_cost = 0
-                delivery_method = "Pickup"
-            else:
-                print("Invalid input. Please enter 1, 2 or 3.")
-            
-            order_details(delivery_cost, delivery_method)
-            input("Press enter to exit.")
+            while True:
+                cls()
+                print("Select a delivery option:")
+                print("1. Standard Delivery")
+                print("2. Express Delivery")
+                print("3. Pickup")
+                number = input_int("> ")
+                if number == 1:
+                    delivery_cost = 5 + len(cart) * 2
+                    delivery_method = "Standard Delivery"
+                elif number == 2:
+                    delivery_cost = 10 + len(cart) * 3
+                    delivery_method = "Express Delivery"
+                elif number == 3:
+                    delivery_cost = 0
+                    delivery_method = "Pickup"
+                else:
+                    print("Invalid input. Please enter 1, 2 or 3.")
+                    number = input_int("> ")
+                cls()
+                order_details(delivery_cost, delivery_method)
+                print("Please select an option:")
+                print("1. Confirm Order")
+                print("2. Change Delivery Method")
+                print("3. Cancel Order")
+                number = input_int("> ")
+                cls()
+                if number == 1:
+                    print("Thank you for your order!")
+                    order_details(delivery_cost, delivery_method)
+                    input("Press enter to continue.")
+                    break
+                elif number == 2:
+                    continue
+                elif number == 3:
+                    print("Order cancelled.")
+                    input("Press enter to continue.")
+                    return
+                else:
+                    print("Invalid input. Please enter 1, 2 or 3.")
+                    number = input_int("> ")
+
         elif number == 2:
             return
         else:
@@ -195,7 +215,7 @@ def order_details(delivery_cost, delivery_method):
         print("   * " + i[0] + " - $" + str(i[1]))
     for i in cart:
         total = total + i[1]
-
+    print()
     gross_total = total + delivery_cost
     print(" - Total cost of products: $" + str(total))
     print(" - Delivery cost: $" + str(delivery_cost))
