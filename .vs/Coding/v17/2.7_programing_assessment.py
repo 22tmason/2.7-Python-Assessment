@@ -76,6 +76,18 @@ def input_int(prompt):
         except ValueError:
             print("Invalid input. Please enter a number.")
 
+def input_string(prompt):
+    """Prompt the user for a string input.
+
+    This function will continue to prompt the user until a valid string is entered.
+    """
+    # This loop will continue to run until the user enters a valid string.
+    while True:
+        try:
+            return str(input(prompt))
+        except ValueError:
+            print("Invalid input. Please enter a string.")
+
 def menu():
     """Display the main menu and allow the user to select a department or their cart."""
     # This function clears the console and displays the main menu.
@@ -128,36 +140,41 @@ def department_menu(department, name):
 
 def cart_menu():
     """Display the cart and allow the user to check out or continue shopping."""
-    standard_delivery = False
-    express_delivery = False
-    pickup = False
+    delivery_cost = 0.00
+    delivery_method = "N/A"
+    delivery_address = ["N/A"]
 
     cls()
     if len(cart) == 0:
         print("Your cart is empty.")
         input("Press enter to continue shopping.")
     else:
-        order_details(standard_delivery, express_delivery, pickup)
+        order_details(delivery_cost, delivery_method)
         print("1. Check out")
         print("2. Continue Shopping")
         print("Would you like to check out or continue shopping?")
         number = input_int("> ")
         if number == 1:
+            cls()
             print("Select a delivery option:")
             print("1. Standard Delivery")
             print("2. Express Delivery")
             print("3. Pickup")
             number = input_int("> ")
             if number == 1:
-                standard_delivery = True
+                delivery_cost = 5 + len(cart) * 2
+                delivery_method = "Standard Delivery"
+                print("Enter your delivery address:")
             elif number == 2:
-                express_delivery = True
+                delivery_cost = 10 + len(cart) * 3
+                delivery_method = "Express Delivery"
             elif number == 3:
-                pickup = True
+                delivery_cost = 0
+                delivery_method = "Pickup"
             else:
                 print("Invalid input. Please enter 1, 2 or 3.")
             
-            order_details(standard_delivery, express_delivery, pickup)
+            order_details(delivery_cost, delivery_method)
             input("Press enter to exit.")
         elif number == 2:
             return
@@ -165,31 +182,24 @@ def cart_menu():
             print("Invalid input. Please enter 1 or 2.")
 
 
-def order_details(standard_delivery, express_delivery, pickup):
+def order_details(delivery_cost, delivery_method):
     """Display the order details."""
     # This function is not used in the program, but it can be used to display the order details.
-
-    total = 0
-    delivery_cost = 0
-    gross_total = 0
-
-    if standard_delivery == True:
-        delivery_cost = 5 + len(cart) * 2
-    elif express_delivery == True:
-        delivery_cost = 10 + len(cart) * 3
-    elif pickup == True:
-        delivery_cost = 0
+    total = 0.00
+    gross_total = 0.00
     
     print("Order Details:")
+    print(" - Delivery Method: " + delivery_method)
+    print(" - Products in your cart:")
     for i in cart:
-        print(i[0] + " - $" + str(i[1]))
+        print("   * " + i[0] + " - $" + str(i[1]))
     for i in cart:
         total = total + i[1]
 
     gross_total = total + delivery_cost
-    print("Total cost of products: $" + str(total))
-    print("Delivery cost: $" + str(delivery_cost))
-    print("Gross total: $" + str(gross_total))
+    print(" - Total cost of products: $" + str(total))
+    print(" - Delivery cost: $" + str(delivery_cost))
+    print(" - Gross total: $" + str(gross_total))
 
 
 while True:
