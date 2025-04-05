@@ -72,7 +72,7 @@ def endorsement():
     for i in range(len(students)):
         if credits_merit[i] + credits_excellence[i] >= 50:
             print(f"{students[i]} - Merit & Excellence Credits: {credits_merit[i] + credits_excellence[i]}")
-    
+
     print("\nStudents eligible for an Excellence endorsement:")
     for i in range(len(students)):
         if credits_excellence[i] >= 50:

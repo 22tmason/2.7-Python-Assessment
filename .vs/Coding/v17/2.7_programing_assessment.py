@@ -55,12 +55,6 @@ paint = [
 # An empty list to store the user's cart.
 cart = []
 
-delivery_standard = False
-delivery_express = False
-pickup = False
-delivery_cost = 0
-total = 0
-
 def cls():
     """Clear the console screen.
 
@@ -81,29 +75,6 @@ def input_int(prompt):
             return int(input(prompt))
         except ValueError:
             print("Invalid input. Please enter a number.")
-
-
-def order_details():
-    global delivery_express, delivery_standard, pickup, delivery_cost, total
-    """Display the order details."""
-    # This function is not used in the program, but it can be used to display the order details.
-    print("Order Details:")
-    if delivery_standard == True:
-        delivery_cost = 5 + len(cart[1]) * 2
-    elif delivery_express == True:
-        delivery_cost = 10 + len(cart[1]) * 3
-    elif pickup == True:
-        delivery_cost = 0
-
-    for i in cart:
-        print(i[0] + " - $" + str(i[1]))
-    print("Delivery cost: $" + str(delivery_cost))
-    total = total + delivery_cost
-    for i in cart:
-        total = total + i[1]
-    print("Total cost: $" + str(total))
-    input("Press enter to exit.")
-
 
 def menu():
     """Display the main menu and allow the user to select a department or their cart."""
@@ -157,39 +128,68 @@ def department_menu(department, name):
 
 def cart_menu():
     """Display the cart and allow the user to check out or continue shopping."""
+    standard_delivery = False
+    express_delivery = False
+    pickup = False
+
     cls()
     if len(cart) == 0:
         print("Your cart is empty.")
+        input("Press enter to continue shopping.")
     else:
-        order_details()
-    print("1. Check out")
-    print("2. Continue Shopping")
-    print("Would you like to check out or continue shopping?")
-    number = input_int("> ")
-    if number == 1:
-        print("Select a delivery option:")
-        print("1. Standard Delivery")
-        print("2. Express Delivery")
-        print("3. Pickup")
+        order_details(standard_delivery, express_delivery, pickup)
+        print("1. Check out")
+        print("2. Continue Shopping")
+        print("Would you like to check out or continue shopping?")
         number = input_int("> ")
         if number == 1:
-            standard_delivery = True
-            return standard_delivery
+            print("Select a delivery option:")
+            print("1. Standard Delivery")
+            print("2. Express Delivery")
+            print("3. Pickup")
+            number = input_int("> ")
+            if number == 1:
+                standard_delivery = True
+            elif number == 2:
+                express_delivery = True
+            elif number == 3:
+                pickup = True
+            else:
+                print("Invalid input. Please enter 1, 2 or 3.")
+            
+            order_details(standard_delivery, express_delivery, pickup)
+            input("Press enter to exit.")
         elif number == 2:
-            express_delivery = True
-            return express_delivery
-        elif number == 3:
-            pickup = True
-            return pickup
+            return
         else:
-            print("Invalid input. Please enter 1, 2 or 3.")
-        
-        order_details()
-        input("Press enter to exit.")
-    elif number == 2:
-        return
-    else:
-        print("Invalid input. Please enter 1 or 2.")
+            print("Invalid input. Please enter 1 or 2.")
+
+
+def order_details(standard_delivery, express_delivery, pickup):
+    """Display the order details."""
+    # This function is not used in the program, but it can be used to display the order details.
+
+    total = 0
+    delivery_cost = 0
+    gross_total = 0
+
+    if standard_delivery == True:
+        delivery_cost = 5 + len(cart) * 2
+    elif express_delivery == True:
+        delivery_cost = 10 + len(cart) * 3
+    elif pickup == True:
+        delivery_cost = 0
+    
+    print("Order Details:")
+    for i in cart:
+        print(i[0] + " - $" + str(i[1]))
+    for i in cart:
+        total = total + i[1]
+
+    gross_total = total + delivery_cost
+    print("Total cost of products: $" + str(total))
+    print("Delivery cost: $" + str(delivery_cost))
+    print("Gross total: $" + str(gross_total))
 
 
 while True:

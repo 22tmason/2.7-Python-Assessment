@@ -1,39 +1,51 @@
-#create a dictionary
-student = {
-    "name": "John",
-    "age": 17,
-    "grade": "A"
-}
-# prints the whole dictionary
-print("Student Info:", student)
+import tkinter as tk
+import chess
+import chess.svg
+from PIL import Image, ImageTk
+import cairosvg
+import io
 
-# accessing data from the using keys
-print("Name:", student["name"]) # Accessing the value assicted with the key 'name'
+class ChessGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Chess Game")
+        self.board = chess.Board()
+        self.selected_square = None  # Store selected piece
+        self.canvas = tk.Canvas(root, width=500, height=500)
+        self.canvas.pack()
+        self.update_board()
+        self.canvas.bind("<Button-1>", self.on_click)
 
-# using the get() method to safely access the value of a key
-print("School:", student.get("school", "Not assigned"))
+    def update_board(self):
+        board_svg = chess.svg.board(self.board, size=400)
+        board_png = self.svg_to_png(board_svg)
+        self.image = ImageTk.PhotoImage(board_png)
+        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.image)
 
-# Adding a new key-value pair
-student["school"] = "High School"
-print("Updated Student Info:", student)
+    def svg_to_png(self, svg_data):
+        png_data = cairosvg.svg2png(bytestring=svg_data.encode('utf-8'))
+        return Image.open(io.BytesIO(png_data))
 
-# USing keys, you can retiieve a value by speifying its key in square brackets.
-print(student["grade"])
+    def on_click(self, event):
+        square_size = 400 // 8
+        col = event.x // square_size
+        row = 7 - (event.y // square_size)  # Convert to chess row index
+        clicked_square = chess.square(col, row)
 
-#using get() method is useful because you can specify a default value to return if the key does not exist.
-print(student.get("age", "age not found"))
+        if self.selected_square is None:
+            # Select a piece
+            if self.board.piece_at(clicked_square):
+                self.selected_square = clicked_square
+        else:
+            # Attempt to move
+            move = chess.Move(self.selected_square, clicked_square)
+            if move in self.board.legal_moves:
+                self.board.push(move)  # Make move if legal
+            self.selected_square = None  # Reset selection
+            self.update_board()
 
-#Checking for Keys: Use the in keyword to check if a key exists.
-if "name" in student:
-    print("Name is in the dictionary!")
+if __name__ == "__main__":
+    root = tk.Tk()
+    ChessGUI(root)
+    root.mainloop()
 
-"""
-When to Use Dictionaries vs. Lists
-Dictionaries:
-Best for: Situations where you want to associate a unique key with a value (e.g., a phonebook, where names map to phone numbers).
-Access: Data is accessed using keys, which makes lookups very fast.
-Lists:
-Best for: When you need an ordered collection of items, such as a sequence of numbers or a list of names.
-Access: Items are accessed by their position (index) in the list.
-In summary, dictionaries are ideal for scenarios where you need to quickly look up data by a specific identifier, whereas lists are great when the order of items is important and you're mainly iterating through the collection.
-"""
