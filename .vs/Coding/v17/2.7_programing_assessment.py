@@ -100,7 +100,8 @@ def menu():
     print("2. Homeware")
     print("3. Paint")
     print("4. Electrical")
-    print("5. Cart\n")
+    print("5. Cart")
+    print("6. Exit\n")
     print("Please select a department")
     number = input_int("> ")
     if number == 1:
@@ -113,8 +114,10 @@ def menu():
         department_menu(electrical, "Electrical Department")
     elif number == 5:
         cart_menu()
+    elif number == 6:
+        exit()
     else:
-        print("Invalid input. Please enter a number between 1 and 5")
+        print("Invalid input. Please enter a number between 1 and 6")
         input("Press enter to continue.")
 
 
@@ -144,16 +147,18 @@ def create_delivery_address():
     delivery_address = {}
     """Prompt the user to enter their delivery address."""
     # This function will prompt the user to enter their delivery address.
-    # The following print statement displays the delivery address menu.
-    cls()
     # The while loop will continue to run until the user enters a valid address.
     while True:
-        print("Please enter your address:")
+        cls()
+        print("Please enter your delivery information:")
+        delivery_address["Full Name"] = input_string("Enter your full name: ")
         delivery_address["Street"] = input_string("Enter your street: ")
         delivery_address["Suburb"] = input_string("Enter your suburb: ")
         delivery_address["City"] = input_string("Enter your city: ")
         delivery_address["Postcode"] = input_int("Enter your postcode: ")
         delivery_address["Country"] = input_string("Enter your country: ")
+        delivery_address["Phone"] = input_int("Enter your phone number: ")
+    
         cls()
         print("Delivery Address:")
         for key, value in delivery_address.items():
@@ -215,7 +220,7 @@ def cart_menu():
                 order_details(delivery_cost, delivery_method, delivery_address)
                 print("Please select an option:")
                 print("1. Confirm Order")
-                print("2. Change Delivery Method")
+                print("2. Change Delivery Method and Address")
                 print("3. Cancel Order")
                 number = input_int("> ")
                 cls()
