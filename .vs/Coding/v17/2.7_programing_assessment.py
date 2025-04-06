@@ -123,28 +123,47 @@ def menu():
 
 def department_menu(department, name):
     """Display following products in a certain department and allow the user to choose a product to the cart."""
-    cls()
     while True:
+        cls()
         print(name + "\n")
-        counter = 0
-        # The for loop prints each product in a new line.
-        for i in department:
-            # The counter variable is used to number the products.
-            counter += 1
-            # The following print statement displays the product name and price.
-            print(str(counter) + ". " + i[0] + " - $" + str(i[1]))
-        print("Enter the number of the product you would like to add to your cart:\n")
-        # The input_int function is used to get the user's input and check if it is a valid number.
+        for index, item in enumerate(department, 1):
+            print(f"{index}. {item[0]} - ${item[1]}")
+        print("Enter the number of the product you would like to add to your cart:")
         number = input_int("> ")
-        if number > 0 and number <= len(department):
-            # The following print statement displays the product name and price.
-            cart.append(department[number - 1])
-            print(department[number - 1][0] + " has been added to your cart.")
-            input("Press enter to continue.")
+
+        if 1 <= number <= len(department):
+            selected_product = department[number - 1]
+            print("Enter the quantity you would like to add to your cart: ")
+            quantity = input_int(">")
+
+            # Check if the item is already in the cart
+            for item in cart:
+                if item["name"] == selected_product[0]:
+                    item["quantity"] += quantity
+                    break
+            else:
+                # Add new item
+                cart.append({
+                    "name": selected_product[0],
+                    "price": selected_product[1],
+                    "quantity": quantity
+                })
+            print("Product added to cart.")
+            print(f"Name: {selected_product[0]}")
+            print(f"Price: ${selected_product[1]}")
+            print(f"Quantity: {quantity}")
+            input("Please select an option:")
+            print("1. Return to department menu")
+            print("2. Return to main menu")
+            number = input_int("> ")
+            if number == 1:
+                continue
+            elif number == 2:
+                break
         else:
-            # If the user enters an invalid number, the following print statement is displayed.
-            print("Invalid input. Please enter a number between 1 and " + str(len(department)))
-            print("Press enter to return to the department menu.")
+            print("Invalid input. Please enter a valid product number.")
+            input("Press enter to continue.")
+
 
 
 def create_delivery_address():
@@ -181,6 +200,16 @@ def create_delivery_address():
 
     return delivery_address
     
+
+def add_to_cart(name, price, quantity):
+    """Add a product to the cart."""
+    # This function will add a product to the cart.
+    for item in cart:
+        if item[0] == name:
+            item[2] += quantity
+            return
+    cart.append([name, price, quantity])
+
 
 def cart_menu():
     """Display the cart and allow the user to check out or continue shopping."""
@@ -249,8 +278,6 @@ def cart_menu():
 
 
 def order_details(delivery_cost, delivery_method, delivery_address):
-    """Display the order details."""
-    # This function is not used in the program, but it can be used to display the order details.
     total = 0.00
     gross_total = 0.00
     
@@ -259,16 +286,19 @@ def order_details(delivery_cost, delivery_method, delivery_address):
     print(" - Delivery Address:")
     for key, value in delivery_address.items():
         print(f"   * {key}: {value}")
+    
     print(" - Products in your cart:")
-    for i in cart:
-        print("   * " + i[0] + " - $" + str(i[1]))
-    for i in cart:
-        total = total + i[1]
+    for item in cart:
+        subtotal = item["price"] * item["quantity"]
+        print(f"   * {item['name']} x{item['quantity']} - ${item['price']} each | Subtotal: ${subtotal:.2f}")
+        total += subtotal
+
     print()
     gross_total = total + delivery_cost
-    print(" - Total cost of products: $" + str(total))
-    print(" - Delivery cost: $" + str(delivery_cost))
-    print(" - Gross total: $" + str(gross_total))
+    print(" - Total cost of products: $" + f"{total:.2f}")
+    print(" - Delivery cost: $" + f"{delivery_cost:.2f}")
+    print(" - Gross total: $" + f"{gross_total:.2f}")
+
 
 
 while True:
