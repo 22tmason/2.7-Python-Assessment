@@ -86,7 +86,7 @@ def input_string(prompt):
     # This loop will continue to run until the user enters a valid string.
     while True:
         try:
-            return str(input(prompt))
+            return str(input(prompt)).strip()
         except ValueError:
             print("Invalid input. Please enter a string.")
 
@@ -124,23 +124,28 @@ def menu():
 def department_menu(department, name):
     """Display following products in a certain department and allow the user to choose a product to the cart."""
     cls()
-    print(name + "\n")
-    counter = 0
-    # The for loop prints each product in a new line.
-    for i in department:
-        # The counter variable is used to number the products.
-        counter += 1
-        # The following print statement displays the product name and price.
-        print(str(counter) + ". " + i[0] + " - $" + str(i[1]))
-    print("Enter the number of the product you would like to add to your cart:\n")
-    # The input_int function is used to get the user's input and check if it is a valid number.
-    number = input_int("> ")
-    if number > 0 and number <= len(department):
-        # The following print statement displays the product name and price.
-        cart.append(department[number - 1])
-    else:
-        # If the user enters an invalid number, the following print statement is displayed.
-        print("Invalid input. Please enter a number between 1 and " + str(len(department)))
+    while True:
+        print(name + "\n")
+        counter = 0
+        # The for loop prints each product in a new line.
+        for i in department:
+            # The counter variable is used to number the products.
+            counter += 1
+            # The following print statement displays the product name and price.
+            print(str(counter) + ". " + i[0] + " - $" + str(i[1]))
+        print("Enter the number of the product you would like to add to your cart:\n")
+        # The input_int function is used to get the user's input and check if it is a valid number.
+        number = input_int("> ")
+        if number > 0 and number <= len(department):
+            # The following print statement displays the product name and price.
+            cart.append(department[number - 1])
+            print(department[number - 1][0] + " has been added to your cart.")
+            input("Press enter to continue.")
+        else:
+            # If the user enters an invalid number, the following print statement is displayed.
+            print("Invalid input. Please enter a number between 1 and " + str(len(department)))
+            print("Press enter to return to the department menu.")
+
 
 def create_delivery_address():
     global delivery_address
@@ -176,7 +181,6 @@ def create_delivery_address():
 
     return delivery_address
     
-
 
 def cart_menu():
     """Display the cart and allow the user to check out or continue shopping."""
