@@ -1,6 +1,7 @@
 """This is a program for a hardware store that allows users to order products from different departments."""
 
 import os
+import sys
 """The following 2d lists contain the products
 and their prices for each department.
 """
@@ -115,7 +116,7 @@ def menu():
     elif number == 5:
         cart_menu()
     elif number == 6:
-        exit()
+        sys.exit()
     else:
         print("Invalid input. Please enter a number between 1 and 6")
         input("Press enter to continue.")
@@ -128,15 +129,17 @@ def department_menu(department, name):
         print(name + "\n")
         for index, item in enumerate(department, 1):
             print(f"{index}. {item[0]} - ${item[1]}")
-        print("Enter the number of the product you would like to add to your cart:")
+        print("\nEnter the number of the product you would like to add to your cart:")
         number = input_int("> ")
 
         if 1 <= number <= len(department):
             selected_product = department[number - 1]
+            cls()
+            print(f"Product Selected: {selected_product[0]}")
             print("Enter the quantity you would like to add to your cart: ")
             quantity = input_int(">")
 
-            # Check if the item is already in the cart
+            # Check if the item is already in the cart, if so, update the quantity instead of adding a new item.
             for item in cart:
                 if item["name"] == selected_product[0]:
                     item["quantity"] += quantity
@@ -152,7 +155,7 @@ def department_menu(department, name):
             print(f"Name: {selected_product[0]}")
             print(f"Price: ${selected_product[1]}")
             print(f"Quantity: {quantity}")
-            input("Please select an option:")
+            print("Please select an option:")
             print("1. Return to department menu")
             print("2. Return to main menu")
             number = input_int("> ")
@@ -160,6 +163,9 @@ def department_menu(department, name):
                 continue
             elif number == 2:
                 break
+            else:
+                print("Invalid input. Please enter a number between 1 and 2.")
+                input("Press enter to return to department menu.")
         else:
             print("Invalid input. Please enter a valid product number.")
             input("Press enter to continue.")
@@ -199,20 +205,9 @@ def create_delivery_address():
             input("Invalid input. Press enter to return to address delivery menu.")
 
     return delivery_address
-    
-
-def add_to_cart(name, price, quantity):
-    """Add a product to the cart."""
-    # This function will add a product to the cart.
-    for item in cart:
-        if item[0] == name:
-            item[2] += quantity
-            return
-    cart.append([name, price, quantity])
 
 
 def cart_menu():
-    """Display the cart and allow the user to check out or continue shopping."""
     global delivery_address
     delivery_cost = 0.00
     delivery_method = "N/A"
@@ -221,60 +216,120 @@ def cart_menu():
     if len(cart) == 0:
         print("Your cart is empty.")
         input("Press enter to continue shopping.")
+        return
     else:
-        order_details(delivery_cost, delivery_method, delivery_address)
-        print("Please select an option:")
-        print("1. Check out")
-        print("2. Continue Shopping")
-        number = input_int("> ")
-        if number == 1:
-            while True:
-                cls()
-                print("Select a delivery option:")
-                print("1. Standard Delivery")
-                print("2. Express Delivery")
-                print("3. Pickup")
-                number = input_int("> ")
-                if number == 1:
-                    delivery_cost = 5 + len(cart) * 2
-                    delivery_method = "Standard Delivery"
-                    create_delivery_address()
-                elif number == 2:
-                    delivery_cost = 10 + len(cart) * 3
-                    delivery_method = "Express Delivery"
-                    create_delivery_address()
-                elif number == 3:
-                    delivery_cost = 0
-                    delivery_method = "Pickup"
-                else:
-                    input("Invalid input. Press enter to return to delivery method menu.")
-                    
-                cls()
-                order_details(delivery_cost, delivery_method, delivery_address)
-                print("Please select an option:")
-                print("1. Confirm Order")
-                print("2. Change Delivery Method and Address")
-                print("3. Cancel Order")
-                number = input_int("> ")
-                cls()
-                if number == 1:
-                    print("Thank you for your order!")
-                    order_details(delivery_cost, delivery_method, delivery_address)
-                    input("Press enter to continue.")
-                    break
-                elif number == 2:
-                    continue
-                elif number == 3:
-                    print("Order cancelled.")
-                    input("Press enter to continue.")
-                    return
-                else:
-                    input("Invalid input. Press enter to return to delivery method menu.")
+        while True:
+            cls()
+            order_details(delivery_cost, delivery_method, delivery_address)
+            print("\nCart Menu:")
+            print("1. Check out")
+            print("2. Edit Cart")
+            print("3. Continue Shopping")
+            number = input_int("> ")
+            if number == 1:
+                checkout(delivery_cost, delivery_method)
+                return
+            elif number == 2:
+                edit_cart()
+            elif number == 3:
+                return
+            else:
+                input("Invalid input. Press enter to try again.")
 
+
+def checkout(delivery_cost, delivery_method):
+    global delivery_address
+
+    while True:
+        cls()
+        print("Select a delivery option:")
+        print("1. Standard Delivery")
+        print("2. Express Delivery")
+        print("3. Pickup")
+        number = input_int("> ")
+
+        if number == 1:
+            delivery_cost = 5 + sum(item["quantity"] for item in cart) * 2
+            delivery_method = "Standard Delivery"
+            create_delivery_address()
         elif number == 2:
+            delivery_cost = 10 + sum(item["quantity"] for item in cart) * 3
+            delivery_method = "Express Delivery"
+            create_delivery_address()
+        elif number == 3:
+            delivery_cost = 0
+            delivery_method = "Pickup"
+        else:
+            input("Invalid input. Press enter to return to delivery method menu.")
+            continue
+
+        cls()
+        order_details(delivery_cost, delivery_method, delivery_address)
+        print("\nPlease select an option:")
+        print("1. Confirm Order")
+        print("2. Change Delivery Method and Address")
+        print("3. Cancel Order")
+        number = input_int("> ")
+
+        if number == 1:
+            print("Thank you for your order!")
+            input("Press enter to return to main menu.")
+            cart.clear()
+            break
+        elif number == 2:
+            continue
+        elif number == 3:
+            print("Order cancelled.")
+            input("Press enter to return.")
+            break
+        else:
+            input("Invalid input. Press enter to return to delivery menu.")
+
+
+
+def edit_cart():
+    while True:
+        cls()
+        print("Edit Cart\n")
+        if not cart:
+            print("Your cart is empty.")
+            input("Press enter to return.")
+            return
+
+        for idx, item in enumerate(cart, 1):
+            print(f"{idx}. {item['name']} - Quantity: {item['quantity']} - ${item['price']} each")
+
+        print("\nSelect an option:")
+        print("1. Change item quantity")
+        print("2. Remove an item")
+        print("3. Return to previous menu")
+        choice = input_int("> ")
+
+        if choice == 1:
+            item_num = input_int("Enter the item number to change quantity: ")
+            if 1 <= item_num <= len(cart):
+                new_qty = input_int("Enter the new quantity (0 to remove): ")
+                if new_qty <= 0:
+                    cart.pop(item_num - 1)
+                    print("Item removed.")
+                else:
+                    cart[item_num - 1]["quantity"] = new_qty
+                    print("Quantity updated.")
+            else:
+                print("Invalid item number.")
+            input("Press enter to continue.")
+        elif choice == 2:
+            item_num = input_int("Enter the item number to remove: ")
+            if 1 <= item_num <= len(cart):
+                cart.pop(item_num - 1)
+                print("Item removed from cart.")
+            else:
+                print("Invalid item number.")
+            input("Press enter to continue.")
+        elif choice == 3:
             return
         else:
-            input("Invalid input. Please enter to return to delivery method menu.")
+            input("Invalid input. Press enter to try again.")
 
 
 def order_details(delivery_cost, delivery_method, delivery_address):
